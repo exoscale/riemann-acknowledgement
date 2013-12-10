@@ -49,3 +49,7 @@ You can then use exposed functions, provided you have loaded the plugin in your 
 ## Screenshot
 
 ![riemann-acknowledgement](http://i.imgur.com/CrqdYuS.png)
+
+## Caveats
+
+acknowledgements are preserved accross configuration reloads, not accross configuration restarts
