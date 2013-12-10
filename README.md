@@ -21,3 +21,7 @@ In riemann.config
   (acknowledgement/acked-alert-stream
      mailout))
 ```
+
+## Screenshot
+
+![riemann-acknowledgement](http://i.imgur.com/CrqdYuS.png)
