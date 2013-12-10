@@ -38,8 +38,12 @@
 (defn with-ack-status
   "Associate acknowledgement status to events"
   [{:keys [host service acked] :as event}]
-  (let [acked? (or acked (@acks [host service]))]
-    (assoc event :acked acked?)))
+  (try
+    (let [acked? (or acked (@acks [host service]))]
+      (assoc event :acked acked?))
+    (catch Exception e
+      (info "could not process acked status for: " event)
+      event)))
 
 (defn alert-stream
   "Given a function that sends out alerts to interested parties,
