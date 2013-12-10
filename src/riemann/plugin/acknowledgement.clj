@@ -37,8 +37,8 @@
 
 (defn assoc-ack-status
   "Associate acknowledgement status to events"
-  [{:keys [host service] :as event}]
-  (let [acked? (@acks [host service])]
+  [{:keys [host service acked] :as event}]
+  (let [acked? (or acked (@acks [host service]))]
     (assoc event :acked acked?)))
 
 (defn acked-alert-stream
