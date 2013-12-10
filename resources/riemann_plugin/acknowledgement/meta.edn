@@ -1,0 +1,4 @@
+{:plugin "acknowledgement"
+ :title  "A plugin exposing a simple web service to acknowledge alerts"
+ :git-repo "https://github.com/exoscale/riemann-acknowledgements"
+ :require riemann.plugin.acknowledgement}
