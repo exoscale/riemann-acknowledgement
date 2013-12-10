@@ -38,8 +38,10 @@
 (defn assoc-ack-status
   "Associate acknowledgement status to events"
   [{:keys [host service acked] :as event}]
-  (let [acked? (or acked (@acks [host service]))]
-    (assoc event :acked acked?)))
+  (if (sequential? event)
+    (map assoc-ack-status event)
+    (let [acked? (or acked (@acks [host service]))]
+      (assoc event :acked acked?))))
 
 (defn acked-alert-stream
   "Given a function that sends out alerts to interested parties,
@@ -51,10 +53,16 @@
    The double arity version does the same and sends acked events to
    its second argument. This can be useful to index events."
   ([non-acked]
-     (smap assoc-ack-status (where* (complement :acked) non-acked)))
+     (smap assoc-ack-status
+           (let [handler-fn (where* (complement :acked) non-acked)]
+             #(if (sequential? %)
+                (doseq [event %] (handler-fn event))))))
   ([non-acked acked]
      (smap assoc-ack-status
-           (where* (complement :acked) non-acked (else acked)))))
+           (let [handler-fn (where* (complement :acked) non-acked
+                                    (else acked))]
+             #(if (sequential? %)
+                (doseq [event %] (handler-fn event)))))))
 
 (defrecord AcknowledgementServer [host port headers core server]
   ServiceEquiv
