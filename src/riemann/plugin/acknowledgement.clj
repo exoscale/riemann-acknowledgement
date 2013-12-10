@@ -35,15 +35,13 @@
   (route/not-found      "<html><h2>404</h2></html>"))
 
 
-(defn assoc-ack-status
+(defn with-ack-status
   "Associate acknowledgement status to events"
   [{:keys [host service acked] :as event}]
-  (if (sequential? event)
-    (map assoc-ack-status event)
-    (let [acked? (or acked (@acks [host service]))]
-      (assoc event :acked acked?))))
+  (let [acked? (or acked (@acks [host service]))]
+    (assoc event :acked acked?)))
 
-(defn acked-alert-stream
+(defn alert-stream
   "Given a function that sends out alerts to interested parties,
    only call that function on events which are not acknowledged.
 
@@ -53,16 +51,9 @@
    The double arity version does the same and sends acked events to
    its second argument. This can be useful to index events."
   ([non-acked]
-     (smap assoc-ack-status
-           (let [handler-fn (where* (complement :acked) non-acked)]
-             #(if (sequential? %)
-                (doseq [event %] (handler-fn event))))))
+     (where* (complement :acked) non-acked))
   ([non-acked acked]
-     (smap assoc-ack-status
-           (let [handler-fn (where* (complement :acked) non-acked
-                                    (else acked))]
-             #(if (sequential? %)
-                (doseq [event %] (handler-fn event)))))))
+     (where* (complement :acked) non-acked (else acked))))
 
 (defrecord AcknowledgementServer [host port headers core server]
   ServiceEquiv
