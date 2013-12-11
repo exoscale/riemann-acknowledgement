@@ -7,4 +7,5 @@
                  [compojure                 "1.1.6"]
                  [ring/ring-json            "0.2.0"]
                  [javax.servlet/servlet-api "2.5"]
-                 [riemann                   "0.2.4"]])
+                 [riemann                   "0.2.4"
+                  :exclusions [org.slf4j/slf4j-log4j12]]])
