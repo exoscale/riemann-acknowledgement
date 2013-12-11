@@ -22,6 +22,11 @@
   [member]
   (swap! acks disj (vec member)))
 
+(defn acked?
+  [{:keys [tags] :as event}]
+  (let [tags (set tags)]
+    (tags "acked")))
+
 (defroutes api-routes
   "Our simple acknowledgement API with three resty routes.
    We use PUT instead of DELETE here to simplify client side work"
@@ -37,10 +42,13 @@
 
 (defn with-ack-status
   "Associate acknowledgement status to events"
-  [{:keys [host service acked] :as event}]
+  [{:keys [host service tags] :as event}]
   (try
-    (let [acked? (or acked (@acks [host service]))]
-      (assoc event :acked acked?))
+    (if (acked? event)
+      event
+      (if (@acks [host service])
+        (update-in event [:tags] #(-> % (conj "acked") set))
+        event))
     (catch Exception e
       (info "could not process acked status for: " event)
       event)))
@@ -55,9 +63,10 @@
    The double arity version does the same and sends acked events to
    its second argument. This can be useful to index events."
   ([non-acked]
-     (where* (complement :acked) non-acked))
+     (where* (complement acked?) non-acked))
   ([non-acked acked]
-     (where* (complement :acked) non-acked (else acked))))
+     ()
+     (where* (complement acked?) non-acked (else acked))))
 
 (defrecord AcknowledgementServer [host port headers core server]
   ServiceEquiv
