@@ -3,13 +3,13 @@ var app = angular.module('acks', []);
 app.factory('$acks', function ($http) {
    return {
        create: function (ack) {
-           return $http.post('/acks', ack);
+           return $http.post('acks', ack);
        },
        list: function() {
-           return $http.get('/acks');
+           return $http.get('acks');
        },
        rm: function(ack) {
-           return $http.put('/acks', ack);
+           return $http.put('acks', ack);
        }
    };
 });
