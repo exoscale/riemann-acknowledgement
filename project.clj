@@ -1,4 +1,4 @@
-(defproject riemann-acknowledgement "0.1.2"
+(defproject riemann-acknowledgement "0.1.3"
   :description "riemann acknowledgment plugin"
   :url "https://github.com/exoscale/riemann-acknowledgement"
   :license {:name "Eclipse Public License"
